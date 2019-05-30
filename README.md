@@ -3,7 +3,7 @@
 #### A bot to get signatures for iPetition, written in Bash.
 
 ## Installation instructions
-####### TODO
+###### TODO
 
 ## Compatibility
 This program has only been tested on WSL with Ubuntu 18.04 LTS. It *should* work on other Linux distributions, as long as Bash is installed.

@@ -18,7 +18,15 @@ echo "Enter iPetition name (From url https://www.ipetitions.com/petition/PETITIO
 read PNAME
 echo "How many signatures?"
 read SIGNUM
-curl https://www.ipetitions.com/petition/blacktears > site.html
-JWT=`perl formfind.pl < site.html | grep "NAME=\"jwt\""`
-JWT=${JWT#*VALUE=\"}
-JWT=${JWT%\"*}
+for (( i = 1; i <= SIGNUM; i++ ))
+do
+  curl https://www.ipetitions.com/petition/blacktears > site.html
+  JWT=$(perl formfind.pl < site.html | grep "NAME=\"jwt\"")
+  JWT=${JWT#*VALUE=\"}
+  JWT=${JWT%\"*}
+  FIRST=$(awk -v line="$i" -v field=1 'NR==line{print $field}' name.list)
+  LAST=$(awk -v line="$i" -v field=2 'NR==line{print $field}' name.list)
+  sleep 1s
+  curl -d jwt="$JWT" -d Submissions[name]="$FIRST $LAST" -d Submissions[email]="$FIRST.$LAST@gmail.com" -d Submissions[show_name]="1" -d Submissions[subscribe_to_similar]="0" https://www.ipetitions.com/petition/$PNAME/sign
+  rm -f site.html
+done

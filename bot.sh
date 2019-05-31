@@ -22,7 +22,7 @@ if [[ -z "$PNAME" ]]; then
   read PNAME
 fi
 if [[ -z "$SIGNUM" ]]; then
-  SIGNUM = 8
+  SIGNUM=8
 fi
 for (( i = 1; i <= SIGNUM; i++ ))
 do

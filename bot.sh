@@ -36,6 +36,6 @@ do
   sleep 3s
   curl -d jwt="$JWT" -d Submissions[name]="$FIRST $LAST" -d Submissions[email]="$FIRST.$LAST@gmail.com" -d Submissions[show_name]="1" -d Submissions[subscribe_to_similar]="0" https://www.ipetitions.com/petition/$PNAME/sign
   rm -f site.html
-  echo Sleeping for 3 seconds to prevent spamming...
+  echo -e "\nSleeping for 3 seconds to prevent spamming...""
   sleep 3s
 done

@@ -13,20 +13,25 @@
 # HISTORY
 #
 # 0.1 - May 30 2019 - Created!
+# 1.0 - May 31 2019 - Added call parameters
 
-echo "Enter iPetition name (From url https://www.ipetitions.com/petition/PETITIONNAME)"
-read PNAME
-echo "How many signatures?"
-read SIGNUM
+PNAME=$1
+SIGNUM=$2
+if [[ -z "$PNAME" ]]; then
+  echo "Enter iPetition name (From url https://www.ipetitions.com/petition/PETITIONNAME)"
+  read PNAME
+fi
+if [[ -z "$SIGNUM" ]]; then
+  SIGNUM = 8
+fi
 for (( i = 1; i <= SIGNUM; i++ ))
 do
-  curl https://www.ipetitions.com/petition/blacktears > site.html
+  curl -s https://www.ipetitions.com/petition/blacktears > site.html
   JWT=$(perl formfind.pl < site.html | grep "NAME=\"jwt\"")
   JWT=${JWT#*VALUE=\"}
   JWT=${JWT%\"*}
-  FIRST=$(awk -v line="$i" -v field=1 'NR==line{print $field}' name.list)
-  LAST=$(awk -v line="$i" -v field=2 'NR==line{print $field}' name.list)
-  sleep 1s
+  FIRST=$(curl -s https://www.pseudorandom.name/ | awk -v N=1 '{print $N}')
+  LAST=$(curl -s https://www.pseudorandom.name/ | awk -v N=2 '{print $N}')
   curl -d jwt="$JWT" -d Submissions[name]="$FIRST $LAST" -d Submissions[email]="$FIRST.$LAST@gmail.com" -d Submissions[show_name]="1" -d Submissions[subscribe_to_similar]="0" https://www.ipetitions.com/petition/$PNAME/sign
   rm -f site.html
 done

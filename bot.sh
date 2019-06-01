@@ -38,40 +38,31 @@ fi
 for (( i = 1; i <= SIGNUM; i++ ))
 do
   echo "cURLing 'https://www.ipetitions.com/petition/$PNAME' to 'site.html'..."
-  echo ""
   curl -s "https://www.ipetitions.com/petition/$PNAME" > site.html
 
   echo "Extracting unique signature code with 'formfind'..."
-  echo ""
   JWT=$(perl formfind.pl < site.html | grep "NAME=\"jwt\"")
   JWT=${JWT#*VALUE=\"}
   JWT=${JWT%\"*}
 
   echo "Getting name from 'https://www.pseudorandom.name/'..."
-  echo ""
   FIRST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=1 '{print $N}')
   LAST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=2 '{print $N}')
   echo " $FIRST $LAST"
-  echo ""
 
   EMAIL="$FIRST.$LAST@gmail.com"
-  echo "Email: $EMAIL"
-  echo ""
+  echo " Email: $EMAIL"
 
   echo "Sleeping for 3 seconds to prevent spamming..."
-  echo ""
   sleep 3s
 
   echo "Submitting signature..."
-  echo ""
   curl -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign"
   echo ""
 
   echo "Removing 'site.html'"
-  echo ""
   rm -f site.html
 
   echo "Sleeping for 3 seconds to prevent spamming..."
-  echo ""
   sleep 3s
 done

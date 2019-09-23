@@ -3,11 +3,18 @@
 #### A bot to get signatures for iPetitions, written in Bash.
 
 ## Compatibility
-This program has only been tested on Ubuntu 18.04 LTS (including WSL). It *should* work on other Linux distributions, as long as Bash is installed.
+https://img.shields.io/badge/Arch-Tested-brightgreen https://img.shields.io/badge/Ubuntu%2018.04%20LTS-Tested-brightgreen https://img.shields.io/badge/WSL-Tested-brightgreen
+
+It should work on anything else that runs bash.
 
 ## Warranty
-This program does not come with any kind of warranty. If you get banned from iPetitions for violating its terms and conditions, I take no responsibility. **This program is for educational purposes ONLY**.
+This program does not come with any kind of warranty. If you get banned from iPetitions for violating its terms and conditions, I take no responsibility.
 ##### Note: This program uses a Perl script by Daniel Stenberg <daniel@haxx.se>.
+
+## Dependencies
+ * Bash
+ * Curl
+ * Git
 
 ## Usage Instructions
 First clone this repository with:

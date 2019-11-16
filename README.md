@@ -14,6 +14,7 @@ This program does not come with any kind of warranty. If you get banned from iPe
 
 ## Dependencies
  * Curl
+ * Perl
 
 ## Usage Instructions
 First clone this repository with:

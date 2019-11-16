@@ -1,5 +1,6 @@
 # iPetitions-Bot
 ![License](https://img.shields.io/github/license/raymo111/iPetitions-Bot)
+
 A bot to get signatures for iPetitions.
 
 ## Compatibility

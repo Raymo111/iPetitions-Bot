@@ -44,7 +44,7 @@ do
   curl -s "https://www.ipetitions.com/petition/$PNAME" > $TMP/petition.html
 
   echo "Extracting unique signature code with 'formfind'..."
-  JWT=$(perl /usr/lib/formfind.pl < $TMP/petition.html | grep "NAME=\"jwt\"")
+  JWT=$(perl /usr/lib/ipetitions-bot/formfind.pl < $TMP/petition.html | grep "NAME=\"jwt\"")
 
   echo "Removing '$TMP/petition.html'"
   rm -f $TMP/petition.html

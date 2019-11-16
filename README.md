@@ -19,7 +19,7 @@ This program does not come with any kind of warranty. If you get banned from iPe
 ## Installation
 Do the following in bash:
 ```
-git clone https://github.com/Raymo111/iPetitions-Bot && cd iPetitions-Bot && chmod +x install.sh && ./install.sh
+git clone https://github.com/Raymo111/iPetitions-Bot && cd iPetitions-Bot && chmod +x install.sh && sudo ./install.sh
 ```
 
 ## Usage

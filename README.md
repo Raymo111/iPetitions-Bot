@@ -13,9 +13,7 @@ This program does not come with any kind of warranty. If you get banned from iPe
 ##### Note: This program uses a Perl script by Daniel Stenberg <daniel@haxx.se>.
 
 ## Dependencies
- * Bash
  * Curl
- * Git
 
 ## Usage Instructions
 First clone this repository with:

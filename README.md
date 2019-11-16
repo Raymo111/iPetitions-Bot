@@ -1,6 +1,6 @@
 # iPetitions-Bot
-#### By Raymo111
-#### A bot to get signatures for iPetitions, written in Bash.
+![License](https://img.shields.io/github/license/raymo111/iPetitions-Bot)
+A bot to get signatures for iPetitions.
 
 ## Compatibility
 ![Tested on Arch](https://img.shields.io/badge/Arch-Tested-brightgreen) ![Tested on Ubuntu 18.04 LTS](https://img.shields.io/badge/Ubuntu%2018.04%20LTS-Tested-brightgreen) ![Tested on WSL](https://img.shields.io/badge/WSL-Tested-brightgreen)

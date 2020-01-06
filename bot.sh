@@ -17,10 +17,10 @@
 # 1.1 - November 16, 2019 - Now works from PATH
 
 exiting() {
-  echo ""
-  echo "Exiting..."
-  rm -f site.html
-  exit
+	echo ""
+	echo "Exiting..."
+	rm -f site.html
+	exit
 }
 
 trap exiting SIGINT
@@ -30,43 +30,50 @@ SIGNUM=$2
 TMP=/tmp/iPetitions-Bot
 
 if [[ -z "$PNAME" ]]; then
-  echo "Enter petition name (From url https://www.ipetitions.com/petition/PETITIONNAME)"
-  read PNAME
+	echo "Enter petition name (From url https://www.ipetitions.com/petition/PETITIONNAME)"
+	read PNAME
 fi
 if [[ -z "$SIGNUM" ]]; then
-  SIGNUM=8
+	SIGNUM=8
 fi
 
 for (( i = 1; i <= SIGNUM; i++ ))
 do
-  echo "cURLing 'https://www.ipetitions.com/petition/$PNAME' to '$TMP/petition.html'..."
-  mkdir -p $TMP
-  curl -s "https://www.ipetitions.com/petition/$PNAME" > $TMP/petition.html
+	IP1=$( shuf -n 1 <(seq 255 | grep -Fxv -e{1,10,192}) )
+	IP2=$(( RANDOM % 255 ))
+	IP3=$(( RANDOM % 255 ))
+	IP4=$(( RANDOM % 255 ))
+	IP="$IP1.$IP2.$IP3.$IP4"
+	echo "IP: $IP"
+	#echo "cURLing 'https://www.ipetitions.com/petition/$PNAME' to '$TMP/petition.html'..."
+	mkdir -p $TMP
+	curl -sH "X-Forwarded-For: $IP" "https://www.ipetitions.com/petition/$PNAME" > $TMP/petition.html
 
-  echo "Extracting unique signature code with 'formfind'..."
-  JWT=$(perl /usr/lib/ipetitions-bot/formfind.pl < $TMP/petition.html | grep "NAME=\"jwt\"")
+	#echo "Extracting unique signature code with 'formfind'..."
+	JWT=$(perl /usr/lib/ipetitions-bot/formfind.pl < $TMP/petition.html | grep "NAME=\"jwt\"")
 
-  echo "Removing '$TMP/petition.html'"
-  rm -f $TMP/petition.html
+	#echo "Removing '$TMP/petition.html'"
+	rm -f $TMP/petition.html
 
-  JWT=${JWT#*VALUE=\"}
-  JWT=${JWT%\"*}
+	JWT=${JWT#*VALUE=\"}
+	JWT=${JWT%\"*}
 
-  echo "Getting name from 'https://www.pseudorandom.name/'..."
-  FIRST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=1 '{print $N}')
-  LAST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=2 '{print $N}')
-  echo " $FIRST $LAST"
+	#echo "Getting name from 'https://www.pseudorandom.name/'..."
+	FIRST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=1 '{print $N}')
+	LAST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=2 '{print $N}')
+	echo "Name: $FIRST $LAST"
 
-  EMAIL="$FIRST.$LAST@gmail.com"
-  echo " Email: $EMAIL"
+	EMAIL="$FIRST.$LAST@gmail.com"
+	echo "Email: $EMAIL"
 
-  echo "Sleeping for 3 seconds to prevent being banned for spamming..."
-  sleep 3s
+	#echo "Sleeping for 3 seconds to prevent being banned for spamming..."
+	sleep 1s
 
-  echo "Submitting signature..."
-  curl -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign"
-  echo ""
+	#echo "Submitting signature..."
+	curl -H "X-Forwarded-For: $IP" -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign"
+	echo ""
+	echo ""
 
-  echo "Sleeping for 3 seconds to prevent being banned for spamming..."
-  sleep 3s
+	#echo "Sleeping for 3 seconds to prevent being banned for spamming..."
+	#sleep 3s
 done

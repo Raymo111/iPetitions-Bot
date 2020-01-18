@@ -23,7 +23,7 @@ git clone https://github.com/Raymo111/iPetitions-Bot && cd iPetitions-Bot && chm
 ```
 
 ## Usage
+```
 ipetitions-bot PETITIONNAME NUMBEROFSIGNATURES
 ```
-Unless you can solve the CAPTCHA problem, don't use the `NUMBEROFSIGNATURES`; the default is 8 signatures.
-You can run this bot once per hour to bypass the CAPTCHA, or switch IP addresses.
+Running just `ipetitions-bot` will result in prompting for the two parameters.

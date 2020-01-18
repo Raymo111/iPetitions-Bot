@@ -15,6 +15,7 @@
 # 0.1 - May 30, 2019 - Created!
 # 1.0 - May 31, 2019 - Added call parameters
 # 1.1 - November 16, 2019 - Now works from PATH
+# 1.2 - January 18, 2020 - IP randomization enabled
 
 exiting() {
 	echo ""
@@ -30,11 +31,10 @@ SIGNUM=$2
 TMP=/tmp/iPetitions-Bot
 
 if [[ -z "$PNAME" ]]; then
-	echo "Enter petition name (From url https://www.ipetitions.com/petition/PETITIONNAME)"
-	read PNAME
+	read -p "Petition name (From url https://www.ipetitions.com/petition/PETITIONNAME): " PNAME
 fi
 if [[ -z "$SIGNUM" ]]; then
-	SIGNUM=8
+	read -p "Number of petitions: " SIGNUM
 fi
 
 for (( i = 1; i <= SIGNUM; i++ ))

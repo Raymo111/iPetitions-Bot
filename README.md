@@ -10,7 +10,7 @@ It should work on anything else that runs bash.
 
 ## Warranty
 This program does not come with any kind of warranty. If you get banned from iPetitions for violating its terms and conditions, I take no responsibility.
-##### Note: This program uses a Perl script by Daniel Stenberg <daniel@haxx.se>.
+##### Note: This program uses a Perl script by Daniel Stenberg \<<daniel@haxx.se>\>.
 
 ## Dependencies
  * curl
@@ -20,7 +20,7 @@ This program does not come with any kind of warranty. If you get banned from iPe
 ## Installation
 Run the following in bash:
 ```
-wget -O - https://raw.githubusercontent.com/Raymo111/iPetitions-Bot/master/install.sh | sudo bash
+wget -O - --no-cache https://raw.githubusercontent.com/Raymo111/iPetitions-Bot/master/install.sh | sudo bash
 ```
 
 ## Usage

@@ -24,8 +24,7 @@ mkdir -p $LIB
 cp -f $TMP/bot.sh $LIB
 chmod +x $LIB/bot.sh
 cp -f $TMP/formfind.pl $LIB
-rm -rf $BIN
-ln -s $LIB/bot.sh $BIN
+ln -sf $LIB/bot.sh $BIN
 chmod +x $BIN
 rm -rf $TMP
 echo -e "Installation done.\nGPL-v3.0 License for this program can be found at /usr/share/licenses/ipetitions-bot/LICENSE.\nRun \"ipetitions-bot -h\" for help."

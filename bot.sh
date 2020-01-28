@@ -12,68 +12,128 @@
 # Version: 1.1 November 16, 2019
 #
 # HISTORY
-# 0.1 - May 30, 2019 - Created!
-# 1.0 - May 31, 2019 - Added call parameters
-# 1.1 - November 16, 2019 - Now works from PATH
-# 1.2 - January 18, 2020 - IP randomization enabled
+# v0.1 - May 30, 2019 - Created!
+# v1.0 - May 31, 2019 - Added call parameters
+# v1.1 - November 16, 2019 - Now works from PATH
+# v1.2 - January 18, 2020 - IP randomization enabled
+# v1.3 - January 28, 2020 - Revamped interface with options
 
+# Reset option index in case getopts has been used
+OPTIND=1
+
+# Defaults
+TMP=/tmp/pbot
+VERBOSE=0
+COUNT=0
+SIGNUM=10
+
+# Safe exit
 exiting() {
-	echo ""
-	echo "Exiting..."
-	rm -f site.html
+	echo -e "\nExiting..."
+	rm -rf $TMP
 	exit
 }
 
+# Print info
+show_help () {
+	echo -e "
+Welcome to iPetitions-Bot, a bot that lets you automatically sign petitions as many times as you want.
+Required dependencies:
+	curl, perl, jq
+To use this program, run:
+	ipetitions-bot [-OPTIONS] [PETITIONNAME]
+Options:
+	-h			Show this information
+	-v			Be verbose and output more info
+	-c			Print count after each successful signature
+	-n [SIGNUM]	Number of signatures (default is 10)
+The petition name can be found from the url (https://www.ipetitions.com/petition/PETITIONNAME)
+Report any bugs and contribute suggestions here: https://github.com/Raymo111/iPetitions-Bot/issues/new
+"
+}
+
+# Trap ctrl+c for safe exit
 trap exiting SIGINT
 
-PNAME=$1
-SIGNUM=$2
-TMP=/tmp/iPetitions-Bot
+# Handle options
+while getopts hvcn: OPT; do
+    case $OPT in
+        h) show_help
+        	exit 0
+        	;;
+        v) VERBOSE=1
+        	;;
+        c) COUNT=1
+           	;;
+		n) SIGNUM=$OPTARG
+			;;
+        *)
+			echo >&2 "Invalid option." # Print to stderr
+			show_help
+            exit 1
+            ;;
+    esac
+done
+shift "$((OPTIND-1))"   # Discard options
 
-if [[ -z "$PNAME" ]]; then
-	read -p "Petition name (From url https://www.ipetitions.com/petition/PETITIONNAME): " PNAME
-fi
-if [[ -z "$SIGNUM" ]]; then
-	read -p "Number of petitions: " SIGNUM
+# Check for PNAME
+PNAME=$@
+if [[ -z "$@" ]]; then
+	echo >&2 "You must specify the petition to sign."
+	show_help
+	exit 1
 fi
 
-for (( i = 1; i <= SIGNUM; i++ ))
+mkdir -p $TMP
+
+# Sign
+i=0
+while [ $i -lt $SIGNUM ]
 do
+	((i++))
+	if [ $COUNT == 1 ]; then echo "[$i/$SIGNUM]"; fi
+
+	# Generate random IP
 	IP1=$( shuf -n 1 <(seq 255 | grep -Fxv -e{1,10,192}) )
 	IP2=$(( RANDOM % 255 ))
 	IP3=$(( RANDOM % 255 ))
 	IP4=$(( RANDOM % 255 ))
 	IP="$IP1.$IP2.$IP3.$IP4"
-	echo "IP: $IP"
-	#echo "cURLing 'https://www.ipetitions.com/petition/$PNAME' to '$TMP/petition.html'..."
-	mkdir -p $TMP
+	echo "Random IP: $IP"
+
+	if [ $VERBOSE == 1 ]; then echo "cURLing 'https://www.ipetitions.com/petition/$PNAME' to '$TMP/petition.html'..."; fi
 	curl -sH "X-Forwarded-For: $IP" "https://www.ipetitions.com/petition/$PNAME" > $TMP/petition.html
 
-	#echo "Extracting unique signature code with 'formfind'..."
+	if [ $VERBOSE == 1 ]; then echo "Extracting unique signature code with 'formfind'..."; fi
 	JWT=$(perl /usr/lib/ipetitions-bot/formfind.pl < $TMP/petition.html | grep "NAME=\"jwt\"")
-
-	#echo "Removing '$TMP/petition.html'"
-	rm -f $TMP/petition.html
-
 	JWT=${JWT#*VALUE=\"}
 	JWT=${JWT%\"*}
 
-	#echo "Getting name from 'https://www.pseudorandom.name/'..."
-	FIRST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=1 '{print $N}')
-	LAST=$(curl -s "https://www.pseudorandom.name/" | awk -v N=2 '{print $N}')
-	echo "Name: $FIRST $LAST"
+	# Check for existing petition
+	if [[ -z "$JWT" ]]; then
+		echo -e >&2 "Petition not found.\nIf this issue persists please file a bug report."
+		exit 1
+	fi
 
+	if [ $VERBOSE == 1 ]; then echo "Removing '$TMP/petition.html'"; fi
+	rm -f $TMP/petition.html
+
+	if [ $VERBOSE == 1 ]; then echo "Getting name from 'https://www.pseudorandom.name/'..."; fi
+	FIRST=$(curl -sH "X-Forwarded-For: $IP" "https://www.pseudorandom.name/" | awk -v N=1 '{print $N}')
+	LAST=$(curl -sH "X-Forwarded-For: $IP" "https://www.pseudorandom.name/" | awk -v N=2 '{print $N}')
+	echo "Name: $FIRST $LAST"
 	EMAIL="$FIRST.$LAST@gmail.com"
 	echo "Email: $EMAIL"
 
-	#echo "Sleeping for 3 seconds to prevent being banned for spamming..."
+	if [ $VERBOSE == 1 ]; then echo "Sleeping for 1 second to prevent overload..."; fi
 	sleep 1s
 
-	#echo "Submitting signature..."
-	curl -H "X-Forwarded-For: $IP" -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign"
+	if [ $VERBOSE == 1 ]; then echo "Submitting signature..."; fi
+	RESULT=$(curl -sH "X-Forwarded-For: $IP" -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign" | jq -r '.result')
+	echo "Result: $RESULT"
+	if [ "$RESULT" == "error" ]; then
+		echo "Retrying..."
+		((i--))
+	fi
 	echo ""
-	echo ""
-
-	#echo "Sleeping for 3 seconds to prevent being banned for spamming..."
-	#sleep 3s
 done

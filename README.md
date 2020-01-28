@@ -17,13 +17,13 @@ This program does not come with any kind of warranty. If you get banned from iPe
  * Perl
 
 ## Installation
-Do the following in bash:
+Run the following in bash:
 ```
-git clone https://github.com/Raymo111/iPetitions-Bot && cd iPetitions-Bot && chmod +x install.sh && sudo ./install.sh
+wget -O - https://raw.githubusercontent.com/Raymo111/iPetitions-Bot/master/install.sh | sudo bash
 ```
 
 ## Usage
 ```
-ipetitions-bot PETITIONNAME NUMBEROFSIGNATURES
+ipetitions-bot [-OPTIONS] [PETITIONNAME]
 ```
-Running just `ipetitions-bot` will result in prompting for the two parameters.
+Running just `ipetitions-bot -h` will show a list of options.

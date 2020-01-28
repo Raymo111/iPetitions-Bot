@@ -43,9 +43,9 @@ Required dependencies:
 To use this program, run:
 	ipetitions-bot [-OPTIONS] [PETITIONNAME]
 Options:
-	-h			Show this information
-	-v			Be verbose and output more info
-	-c			Print count after each successful signature
+	-h		Show this information
+	-v		Be verbose and output more info
+	-c		Print count after each successful signature
 	-n [SIGNUM]	Number of signatures (default is 10)
 The petition name can be found from the url (https://www.ipetitions.com/petition/PETITIONNAME)
 Report any bugs and contribute suggestions here: https://github.com/Raymo111/iPetitions-Bot/issues/new

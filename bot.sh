@@ -2,14 +2,13 @@
 
 # bot.sh
 #
-# This script gets an HTML iPetitions webpage with curl, passes it to
-# formfind.pl, and submits a list of randomly generated names from
-# https://www.pseudorandom.name/ and emails to the petition.
-# FOR EDUCATIONAL PURPOSES ONLY. NOT MY RESPONSIBILITY FOR ANYTHING
-# BAD THAT YOU DO WITH THIS SCRIPT.
+# This script gets an HTML iPetitions webpage with curl and submits a list of
+# randomly generated names from https://www.pseudorandom.name/ and emails to
+# the petition.
+# FOR EDUCATIONAL PURPOSES ONLY. I AM NOT RESPONSIBLE FOR ANYTHING BAD THAT
+# YOU DO WITH THIS SCRIPT.
 #
-# Author: Raymo111
-# Version: 1.1 November 16, 2019
+# Author: Raymond Li <pbot@raymond.li>
 #
 # HISTORY
 # v0.1 - May 30, 2019 - Created!
@@ -17,20 +16,20 @@
 # v1.1 - November 16, 2019 - Now works from PATH
 # v1.2 - January 18, 2020 - IP randomization enabled
 # v1.3 - January 28, 2020 - Revamped interface with options
+# v1.4 - August 18, 2021 - Use grep to get token and remove formfind dependency
 
 # Reset option index in case getopts has been used
 OPTIND=1
 
 # Defaults
-TMP=/tmp/pbot
 VERBOSE=0
 COUNT=0
 SIGNUM=10
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
 
 # Safe exit
 exiting() {
 	echo -e "\nExiting..."
-	rm -rf $TMP
 	exit
 }
 
@@ -84,8 +83,6 @@ if [[ -z "$@" ]]; then
 	exit 1
 fi
 
-mkdir -p $TMP
-
 # Sign
 i=0
 while [ $i -lt $SIGNUM ]
@@ -101,22 +98,15 @@ do
 	IP="$IP1.$IP2.$IP3.$IP4"
 	echo "Random IP: $IP"
 
-	if [ $VERBOSE == 1 ]; then echo "cURLing 'https://www.ipetitions.com/petition/$PNAME' to '$TMP/petition.html'..."; fi
-	curl -sH "X-Forwarded-For: $IP" "https://www.ipetitions.com/petition/$PNAME" > $TMP/petition.html
-
-	if [ $VERBOSE == 1 ]; then echo "Extracting unique signature code with 'formfind'..."; fi
-	JWT=$(perl /usr/lib/ipetitions-bot/formfind.pl < $TMP/petition.html | grep "NAME=\"jwt\"")
-	JWT=${JWT#*VALUE=\"}
-	JWT=${JWT%\"*}
+	if [ $VERBOSE == 1 ]; then echo "Retrieving unique signature JWT"; fi
+	JWT=$(curl -sH "X-Forwarded-For: $IP" -H "user-agent: $UA" "https://www.ipetitions.com/petition/$PNAME"  | grep -oP '(?<=name="jwt" value=").*(?="\>)')
+	if [ $VERBOSE == 1 ]; then echo "JWT: $JWT"; fi
 
 	# Check for existing petition
 	if [[ -z "$JWT" ]]; then
-		echo -e >&2 "Petition not found.\nIf this issue persists please file a bug report."
+		echo -e >&2 "JWT not found.\nIf this issue persists please file a bug report."
 		exit 1
 	fi
-
-	if [ $VERBOSE == 1 ]; then echo "Removing '$TMP/petition.html'"; fi
-	rm -f $TMP/petition.html
 
 	if [ $VERBOSE == 1 ]; then echo "Getting name from 'https://www.pseudorandom.name/'..."; fi
 	FIRST=$(curl -sH "X-Forwarded-For: $IP" "https://www.pseudorandom.name/" | awk -v N=1 '{print $N}')
@@ -129,7 +119,7 @@ do
 	sleep 1s
 
 	if [ $VERBOSE == 1 ]; then echo "Submitting signature..."; fi
-	RESULT=$(curl -sH "X-Forwarded-For: $IP" -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign" | jq -r '.result')
+	RESULT=$(curl -sH "X-Forwarded-For: $IP" -H "user-agent: $UA" -d jwt="$JWT" -d "Submissions[name]"="$FIRST $LAST" -d "Submissions[email]"="$EMAIL" -d "Submissions[show_name]"="1" -d "Submissions[subscribe_to_similar]"="0" "https://www.ipetitions.com/petition/$PNAME/sign" | jq -r '.result')
 	echo "Result: $RESULT"
 	if [ "$RESULT" == "error" ]; then
 		echo "Retrying..."

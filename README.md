@@ -6,7 +6,7 @@
 ![Language count](https://img.shields.io/github/languages/count/Raymo111/iPetitions-Bot)
 ![Top language](https://img.shields.io/github/languages/top/Raymo111/iPetitions-Bot)
 ![Latest commit](https://img.shields.io/github/last-commit/Raymo111/iPetitions-Bot)
-![Maintenance](https://img.shields.io/maintenance/yes/2020)
+![Maintenance](https://img.shields.io/maintenance/yes/2021)
 
 A bot to get signatures for iPetitions.
 
@@ -25,6 +25,7 @@ This program does not come with any kind of warranty. If you get banned from iPe
  * curl
  * perl
  * jq
+ * GNU grep
 
 ## Installation
 Run the following in bash:
@@ -37,3 +38,11 @@ wget -O - --no-cache https://raw.githubusercontent.com/Raymo111/iPetitions-Bot/m
 ipetitions-bot [-OPTIONS] [PETITIONNAME]
 ```
 Running just `ipetitions-bot -h` will show a list of options.
+
+## Changelog
+- v0.1 - May 30, 2019 - Created!
+- v1.0 - May 31, 2019 - Added call parameters
+- v1.1 - November 16, 2019 - Now works from PATH
+- v1.2 - January 18, 2020 - IP randomization enabled
+- v1.3 - January 28, 2020 - Revamped interface with options
+- v1.4 - August 18, 2021 - Use grep to get token and remove formfind dependency

@@ -6,7 +6,7 @@
 ![Language count](https://img.shields.io/github/languages/count/Raymo111/iPetitions-Bot)
 ![Top language](https://img.shields.io/github/languages/top/Raymo111/iPetitions-Bot)
 ![Latest commit](https://img.shields.io/github/last-commit/Raymo111/iPetitions-Bot)
-![Maintenance](https://img.shields.io/maintenance/yes/2021)
+![Maintenance](https://img.shields.io/maintenance/yes/2022)
 
 A bot to get signatures for iPetitions.
 
@@ -19,7 +19,6 @@ It should work on anything else that runs bash.
 
 ## Warranty
 This program does not come with any kind of warranty. If you get banned from iPetitions for violating its terms and conditions, I take no responsibility.
-##### Note: This program uses a Perl script by Daniel Stenberg \<<daniel@haxx.se>\>.
 
 ## Dependencies
  * curl
